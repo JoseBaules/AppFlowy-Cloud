@@ -1,0 +1,35 @@
+# Build AppFlowy Cloud, admin UI, and worker from THIS repository (current directory),
+# instead of only pulling pre-built images from Docker Hub.
+#
+# Usage (from the repo root, e.g. ~/My-AppFlowy-Cloud):
+#   docker compose -f docker-compose.yml -f docker-compose.local-build.yml up -d --build
+#
+# Rebuild after code changes:
+#   docker compose -f docker-compose.yml -f docker-compose.local-build.yml build appflowy_cloud
+#   docker compose -f docker-compose.yml -f docker-compose.local-build.yml up -d
+#
+# For day-to-day Rust development without rebuilding images, use ./script/run_local_server.sh
+# (docker-compose-dev.yml + cargo run on the host).
+
+services:
+  appflowy_cloud:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        FEATURES: ""
+        PROFILE: release
+
+  admin_frontend:
+    build:
+      context: .
+      dockerfile: ./admin_frontend/Dockerfile
+      args:
+        PROFILE: release
+
+  appflowy_worker:
+    build:
+      context: .
+      dockerfile: ./services/appflowy-worker/Dockerfile
+      args:
+        PROFILE: release

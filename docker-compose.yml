@@ -1,4 +1,5 @@
 # Essential services for AppFlowy Cloud
+# Build from this repo (not Docker Hub): merge docker-compose.local-build.yml — see that file.
 
 services:
   nginx:
