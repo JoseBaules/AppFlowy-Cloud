@@ -1,0 +1,25 @@
+---
+description: Actix Web API patterns for src/api handlers and application wiring
+globs:
+  - src/api/**/*.rs
+  - src/application.rs
+alwaysApply: false
+---
+
+# API layer — Actix patterns
+
+## Route registration
+
+- Expose a **`pub fn <feature>_scope() -> Scope`** per module (e.g. `user_scope()` in `user.rs`).
+- Nest under `/api/...` with `web::scope("/api/<segment>")`, then `.service(web::resource(...).route(...))`.
+- Register new scopes in `src/application.rs` alongside existing `.service(..._scope())` calls.
+
+## Handlers
+
+- Inject shared deps with **`actix_web::web::Data<AppState>`** (or typed extractors from `crate::biz::authentication::jwt` such as `UserUuid` where applicable).
+- Prefer **`#[tracing::instrument(skip(...), err)]`** on handlers for consistent tracing.
+- Return types: use **`Result<JsonAppResponse<T>>`** (or existing project response types) and map errors with **`AppResponseError::from`**.
+
+## Imports
+
+- Handlers call **`crate::biz::...`** for logic; keep `src/api/` thin — no heavy business rules in handlers.

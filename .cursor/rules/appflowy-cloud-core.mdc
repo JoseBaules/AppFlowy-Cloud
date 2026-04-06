@@ -1,0 +1,26 @@
+---
+description: AppFlowy Cloud repo layout, tooling, and layering — applies to all Rust work
+alwaysApply: true
+---
+
+# AppFlowy Cloud — core conventions
+
+## Architecture
+
+- **Main server crate** (root `Cargo.toml`): Actix Web app; binary `appflowy_cloud`, library root `src/lib.rs`.
+- **Layers**: `src/api/` → HTTP handlers and route wiring only; `src/biz/` → use cases and orchestration; `src/domain/` → domain logic; `src/state.rs` → shared `AppState` and deps; `src/middleware/` → cross-cutting HTTP.
+- **Workspace crates**: shared code lives in `libs/*`; background/realtime processes in `services/appflowy-worker`, `services/appflowy-collaborate`. Prefer extending an existing crate over duplicating types.
+
+## Tooling (do not skip for PRs)
+
+- Format: `cargo fmt` — project uses `rustfmt.toml` (2 spaces, max width 100, edition 2024).
+- Lint: `cargo clippy -- -D warnings` (see `doc/CONTRIBUTING.md`).
+- SQL: migrations under `migrations/`; SQLx offline metadata in `.sqlx/` when applicable.
+
+## Errors and responses
+
+- Use **`app_error::AppError`** and **`shared_entity::response`** patterns (`AppResponse`, `JsonAppResponse`, `AppResponseError`) for API JSON — match existing handlers in `src/api/`.
+
+## Config
+
+- Environment comes from `.env` (often generated via `./script/generate_env.sh`). Do not commit secrets; follow existing `dev.env` / `deploy.env` patterns.

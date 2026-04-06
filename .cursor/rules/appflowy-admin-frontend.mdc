@@ -1,0 +1,13 @@
+---
+description: Admin frontend crate — Actix + templates and assets
+globs:
+  - admin_frontend/**/*.rs
+  - admin_frontend/templates/**/*
+alwaysApply: false
+---
+
+# Admin frontend (`admin_frontend/`)
+
+- Separate workspace member: **Rust server** with templates under `admin_frontend/templates/` and static assets under `admin_frontend/assets/`.
+- Follow existing **module layout** (`config`, `models`, `session`, etc.) and response helpers (e.g. `src/response.rs`) instead of inventing a new stack.
+- OAuth/provider branding assets live under `assets/<provider>/` — keep paths consistent with template references.

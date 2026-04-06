@@ -1,0 +1,20 @@
+---
+description: Conventions for workspace library crates under libs/
+globs: libs/**/*.rs
+alwaysApply: false
+---
+
+# Library crates (`libs/`)
+
+## Boundaries
+
+- **`database` / `database-entity`**: persistence and DTOs — keep SQLx queries and entity shapes here when they are shared.
+- **`shared-entity` / `client-api-entity`**: API DTOs and client-facing types used across server and clients.
+- **`gotrue` / `gotrue-entity`**: GoTrue (auth service) HTTP integration and types — do not reimplement auth protocol in `src/api/` if a client already exists.
+- **`app-error`**: central **`AppError`** — extend variants only when needed; map to HTTP via existing `actix_web` / response adapters.
+- **`access-control`**: Casbin-based permissions — use real vs noop implementations as wired in `src/application.rs`.
+
+## Dependencies
+
+- Add new workspace deps in **root `Cargo.toml` `[workspace.dependencies]`** and reference with `dep.workspace = true` in member crates when that is the project pattern.
+- Keep crates focused: prefer a new small crate over cyclic imports between `libs/*` packages.
