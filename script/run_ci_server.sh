@@ -64,6 +64,8 @@ set -eo pipefail
 set -x
 
 cd "$(dirname "$0")/.."
+# shellcheck source=docker_compose.sh
+source "$(dirname "$0")/docker_compose.sh"
 
 # Check .env
 if [[ ! -f ".env" ]]; then
@@ -110,7 +112,7 @@ esac
 # Teardown
 docker ps -q --filter "network=appflowy-cloud_default" | xargs -r docker stop
 docker ps -aq --filter "network=appflowy-cloud_default" | xargs -r docker rm
-docker compose down
+docker_compose down
 
 # Build or pull
 if [[ -z "${SKIP_BUILD+x}" ]]; then
@@ -178,7 +180,7 @@ EOF
   fi
 
   export RUST_LOG=trace
-  docker compose -f docker-compose-ci.yml -f docker-compose.override.yml up -d
+  docker_compose -f docker-compose-ci.yml -f docker-compose.override.yml up -d
   rm docker-compose.override.yml
 
   # Update .env file with nginx proxy URLs for local testing
@@ -222,7 +224,7 @@ else
   $BUILD_WORKER && export APPFLOWY_WORKER_VERSION="$IMAGE_VERSION"
   $BUILD_ADMIN_FRONTEND && export APPFLOWY_ADMIN_FRONTEND_VERSION="$IMAGE_VERSION"
 
-  docker compose -f docker-compose-ci.yml pull
+  docker_compose -f docker-compose-ci.yml pull
 
   if $BUILD_CLOUD; then
     echo "appflowy_cloud image version:"
@@ -239,7 +241,7 @@ else
     docker images appflowyinc/admin_frontend --format "{{.Repository}}:{{.Tag}} ({{.CreatedSince}}, {{.Size}})"
   fi
 
-  docker compose -f docker-compose-ci.yml up -d
+  docker_compose -f docker-compose-ci.yml up -d
   
   # Update .env file with nginx proxy URLs for local testing
   echo ""

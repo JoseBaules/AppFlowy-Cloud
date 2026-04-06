@@ -64,6 +64,8 @@ for arg in "$@"; do
 done
 
 cd "$(dirname "$0")/.."
+# shellcheck source=docker_compose.sh
+source "$(dirname "$0")/docker_compose.sh"
 
 # Color codes for better visual output
 RED='\033[0;31m'
@@ -149,15 +151,15 @@ fi
 if [[ "$RESET_DB" == "true" ]]; then
     # When --reset is used, automatically stop and remove containers
     echo -e "${YELLOW}Stopping and removing existing containers (--reset used)...${NC}"
-    docker compose --file ./docker-compose-dev.yml down
+    docker_compose --file ./docker-compose-dev.yml down
     echo -e "${GREEN}✓ Containers stopped and removed (database data is preserved in Docker volume)${NC}"
 elif prompt_yes_no "Stop and remove existing containers? (Data will be preserved)" "n"; then
     echo -e "${YELLOW}Stopping and removing existing containers...${NC}"
-    docker compose --file ./docker-compose-dev.yml down
+    docker_compose --file ./docker-compose-dev.yml down
     echo -e "${GREEN}✓ Containers stopped and removed (database data is preserved in Docker volume)${NC}"
 else
     echo -e "${YELLOW}Keeping existing containers running.${NC}"
-    echo -e "${BLUE}Tip: You can manually stop containers with: docker compose --file ./docker-compose-dev.yml down${NC}"
+    echo -e "${BLUE}Tip: You can manually stop containers with: docker-compose --file ./docker-compose-dev.yml down${NC}"
 fi
 
 echo ""
@@ -169,7 +171,7 @@ export GOTRUE_MAILER_AUTOCONFIRM=true
 # Enable Google OAuth when running locally
 export GOTRUE_EXTERNAL_GOOGLE_ENABLED=true
 
-docker compose --file ./docker-compose-dev.yml up -d --build
+docker_compose --file ./docker-compose-dev.yml up -d --build
 
 # Keep pinging Postgres until it's ready to accept commands
 ATTEMPTS=0
@@ -244,8 +246,8 @@ echo ""
 echo -e "${CYAN}Build configuration:${NC}"
 echo -e "  ${YELLOW}• SQLX_OFFLINE:${NC} ${BLUE}${SQLX_OFFLINE}${NC} (offline mode for faster builds)"
 echo ""
-echo -e "${CYAN}To stop all services:${NC} ${BLUE}docker compose --file ./docker-compose-dev.yml down${NC}"
-echo -e "${CYAN}To view logs:${NC} ${BLUE}docker compose --file ./docker-compose-dev.yml logs -f${NC}"
+echo -e "${CYAN}To stop all services:${NC} ${BLUE}docker-compose --file ./docker-compose-dev.yml down${NC}"
+echo -e "${CYAN}To view logs:${NC} ${BLUE}docker-compose --file ./docker-compose-dev.yml logs -f${NC}"
 echo ""
 set -x
 
@@ -267,4 +269,4 @@ fi
 
 # revert to require signup email verification
 export GOTRUE_MAILER_AUTOCONFIRM=false
-docker compose --file ./docker-compose-dev.yml up -d
+docker_compose --file ./docker-compose-dev.yml up -d

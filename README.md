@@ -67,3 +67,6 @@ We also have a few other open source repos, such as
 
 - See [deployment guide](https://appflowy.com/docs/Step-by-step-Self-Hosting-Guide---From-Zero-to-Production)
 
+## 💻 Development
+
+Local workflow details live in **`doc/CONTRIBUTING.md`**. Quick start: `./script/generate_env.sh`, then `./script/run_local_server.sh` (use `--reset` on first setup). For Compose, use `docker compose` or `docker-compose` with `./docker-compose-dev.yml` as in that doc.
